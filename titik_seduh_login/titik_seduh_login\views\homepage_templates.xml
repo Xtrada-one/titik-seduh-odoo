@@ -1,0 +1,937 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="custom_homepage" inherit_id="website.homepage" name="Custom Homepage">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            
+            <div id="wrap" class="oe_structure oe_empty w-100 m-0 p-0" 
+                 style="position: relative; overflow: hidden; height: 100vh; cursor: pointer;">
+                
+                <style>
+                    /* Link Google Font disterilkan dari karakter ampersand */
+                    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700');
+                    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&amp;display=swap');
+                    @import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&amp;display=swap');
+
+                    /* 1. ANIMASI INTRO */
+                    @keyframes pureFadeInUp {
+                        0% { opacity: 0; transform: translateY(50px); }
+                        100% { opacity: 1; transform: translateY(0); }
+                    }
+                    @keyframes slideOutUpExit {
+                        0% { opacity: 1; transform: translateY(0); }
+                        100% { opacity: 0; transform: translateY(-100vh); }
+                    }
+
+                    /* 2. LAYAR INTRO */
+                    #intro-screen {
+                        position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
+                        display: flex; flex-direction: column; align-items: center; justify-content: center;
+                        background-image: url('/titik_seduh_login/static/src/img/Bg-Titik-Seduh.jpg');
+                        background-size: cover; background-position: center;
+                        z-index: 100; opacity: 0;
+                        animation: pureFadeInUp 1.5s ease-out forwards;
+                    }
+                    #intro-screen.slide-up-exit {
+                        animation: slideOutUpExit 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards !important;
+                    }
+
+                    /* 3. LAYAR UTAMA (CONTAINER BESAR) */
+                    #main-content-wrapper {
+                        position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
+                        z-index: 50; opacity: 0; pointer-events: none;
+                        transition: opacity 1.5s ease-in-out 0.5s;
+                        font-family: 'Poppins', sans-serif;
+                    }
+                    #main-content-wrapper.show { opacity: 1; pointer-events: auto; }
+
+                    /* 4. HEADER CUSTOM FIXED */
+                    .custom-header {
+                        width: 100%; height: 90px;
+                        background-image: url('/titik_seduh_login/static/src/img/Garis-Header.png');
+                        background-size: 100% 100%; background-repeat: no-repeat;
+                        display: flex; align-items: center; justify-content: space-between;
+                        padding: 0 50px; position: absolute; top: 0; left: 0; z-index: 90;
+                    }
+                    .header-left { display: flex; align-items: center; }
+                    .header-logo { height: 60px; width: auto; }
+                    .header-center { display: flex; gap: 40px; margin-left: 50px; }
+                    .nav-link {
+                        color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 16px;
+                        letter-spacing: 1px; transition: color 0.3s; text-transform: uppercase;
+                        cursor: pointer;
+                    }
+                    .nav-link:hover, .nav-link.active { color: #FFA500 !important; }
+                    .btn-login-header {
+                        background-color: #FFA500; color: #000000 !important;
+                        padding: 10px 35px; border-radius: 12px; font-weight: 700;
+                        text-decoration: none; text-transform: uppercase; font-size: 15px;
+                        transition: transform 0.2s; display: inline-block;
+                    }
+
+                    /* 5. STATE HALAMAN (DINAMIS VIEW) */
+                    .page-view {
+                        position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
+                        background-size: cover; background-position: center;
+                        display: none; opacity: 0;
+                        transition: opacity 0.5s ease-in-out;
+                    }
+                    .page-view.active-view {
+                        display: flex; opacity: 1;
+                    }
+
+                    /* A. VIEW: HOME */
+                    #view-home {
+                        background-image: url('/titik_seduh_login/static/src/img/Home.jpg');
+                        align-items: center; padding-left: 50px;
+                    }
+                    .home-content-container { display: flex; flex-direction: column; max-width: 550px; margin-top: 50px; }
+                    .home-title { font-size: 64px; font-weight: 900; color: #5D4037; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+                    .home-desc { font-size: 18px; color: #7A6359; line-height: 1.6; margin-bottom: 40px; font-weight: 500; max-width: 480px; }
+                    .home-button-group { display: flex; gap: 20px; }
+                    .btn-home-cta {
+                        padding: 15px 40px; border-radius: 12px; text-decoration: none;
+                        font-weight: 700; text-transform: capitalize; font-size: 16px;
+                        transition: all 0.3s ease; text-align: center;
+                    }
+                    .btn-brown { background-color: #5D4037; color: #FFFFFF !important; }
+                    .btn-orange { background-color: #FFA500; color: #FFFFFF !important; }
+                    .btn-home-cta:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+                    /* B. VIEW: ABOUT */
+                    #view-about {
+                        box-sizing: border-box;
+                        align-items: flex-start;
+                        justify-content: center;
+                        padding-top: 90px;
+                        background-image: url('/titik_seduh_login/static/src/img/Bg.png');
+                        background-size: cover;
+                        background-position: center;
+                        background-attachment: fixed;
+                        overflow-y: auto;
+                    }
+                    .about-content-container {
+                        width: 100%;
+                        max-width: 1200px;
+                        height: auto; 
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: flex-start;
+                        padding: 20px 40px;
+                        margin: 0 auto;
+                    }
+                    .about-top-section {
+                        display: flex;
+                        width: 100%;
+                        gap: 60px;
+                        margin-bottom: 80px;
+                    }
+                    .about-images {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 30px;
+                    }
+                    .about-img-1 {
+                        width: 100%;
+                        border-radius: 12px;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                        object-fit: cover;
+                    }
+                    .about-img-2 {
+                        width: 80%;
+                        border-radius: 12px;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                        object-fit: cover;
+                        align-self: flex-start;
+                    }
+                    .about-text-content {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        border-left: 2px solid rgba(93, 64, 55, 0.2);
+                        padding-left: 40px;
+                    }
+                    .about-title {
+                        font-weight: 900;
+                        font-size: 36px;
+                        color: #5D4037;
+                        margin-bottom: 30px;
+                        line-height: 1.2;
+                        letter-spacing: -1px;
+                    }
+                    .about-desc {
+                        font-size: 15px;
+                        color: #7A6359;
+                        line-height: 1.8;
+                        margin-bottom: 35px;
+                        font-weight: 500;
+                    }
+                    .about-sub-item {
+                        margin-bottom: 25px;
+                    }
+                    .about-subtitle {
+                        font-size: 24px;
+                        font-weight: 800;
+                        color: #5D4037;
+                        margin-bottom: 10px;
+                    }
+                    .about-subdesc {
+                        font-size: 15px;
+                        color: #7A6359;
+                        line-height: 1.6;
+                        font-weight: 500;
+                    }
+                    .about-bottom-section {
+                        width: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        margin-top: 40px;
+                    }
+                    .team-grid {
+                        display: flex;
+                        justify-content: center;
+                        gap: 40px;
+                        width: 100%;
+                        max-width: 1200px;
+                        flex-wrap: wrap;
+                        margin-top: 20px;
+                    }
+                    .team-member {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        width: calc(25% - 30px);
+                        min-width: 200px;
+                    }
+                    .team-photo {
+                        width: 100%;
+                        aspect-ratio: 1 / 1;
+                        object-fit: cover;
+                        border-radius: 50%;
+                        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+                        margin-bottom: 20px;
+                        border: 5px solid #FFFFFF;
+                        transition: transform 0.3s ease;
+                    }
+                    .team-member:hover .team-photo {
+                        transform: translateY(-10px);
+                    }
+                    .team-name {
+                        font-weight: 800;
+                        font-size: 18px;
+                        color: #5D4037;
+                        text-align: center;
+                        line-height: 1.3;
+                    }
+
+                    /* C. VIEW: LOCATION */
+                    #view-location {
+                        box-sizing: border-box;
+                        align-items: center;
+                        justify-content: center;
+                        padding-top: 90px;
+                        background-image: url('/titik_seduh_login/static/src/img/Bg.png');
+                        background-size: cover;
+                        background-position: center;
+                        background-attachment: fixed;
+                        overflow: hidden;
+                    }
+                    .location-content-container {
+                        width: 100%;
+                        max-width: 100%;
+                        height: calc(100vh - 90px); 
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: space-evenly;
+                        padding: 10px 0;
+                        margin: 0;
+                        box-sizing: border-box;
+                    }
+                    .location-title {
+                        font-weight: 900;
+                        font-size: 36px;
+                        color: #5D4037;
+                        margin: 0;
+                        line-height: 1.2;
+                        letter-spacing: -1px;
+                        text-align: center;
+                        text-transform: uppercase;
+                        padding: 0 20px;
+                        flex-shrink: 0;
+                    }
+                    .location-map-container {
+                        width: 100%;
+                        display: flex;
+                        justify-content: center;
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        overflow: hidden;
+                        box-shadow: none;
+                        margin: 20px 0;
+                    }
+                    .location-map-container:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+                    }
+                    .img-location-content {
+                        width: 100%;
+                        height: auto;
+                        max-height: 60vh;
+                        display: block;
+                        object-fit: cover;
+                        object-position: center;
+                    }
+                    .location-text {
+                        text-align: center;
+                        color: #7A6359;
+                        padding: 0 20px;
+                        flex-shrink: 0;
+                    }
+                    .location-text h4 {
+                        font-weight: 800;
+                        font-size: 24px;
+                        color: #5D4037;
+                        margin-bottom: 5px;
+                    }
+                    .location-text p {
+                        font-size: 16px;
+                        font-weight: 500;
+                        line-height: 1.6;
+                        margin: 0;
+                    }
+
+                    /* D. VIEW: CONTACT */
+                    #view-contact {
+                        box-sizing: border-box;
+                        align-items: center;
+                        justify-content: center;
+                        padding-top: 90px;
+                        background-color: #653C00;
+                        overflow: hidden;
+                    }
+                    .contact-content-container {
+                        width: 100%;
+                        max-width: 1200px;
+                        height: calc(100vh - 90px); 
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 20px 40px;
+                        margin: 0 auto;
+                        box-sizing: border-box;
+                    }
+                    .contact-left {
+                        width: 40%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .contact-left img {
+                        max-width: 100%;
+                        max-height: 90%;
+                        object-fit: contain;
+                    }
+                    .contact-middle {
+                        width: 30%;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        color: #E7D8C9;
+                    }
+                    .contact-middle h3 {
+                        font-size: 24px;
+                        font-weight: 800;
+                        margin-bottom: 25px;
+                        color: #f7e0bd;
+                    }
+                    .contact-features {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                        margin-bottom: 45px;
+                    }
+                    .contact-feature-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        font-size: 14px;
+                        font-weight: 500;
+                    }
+                    .contact-feature-item .feature-icon {
+                        font-size: 16px;
+                    }
+                    .contact-time {
+                        display: flex;
+                        align-items: center;
+                        gap: 20px;
+                        margin-bottom: 45px;
+                    }
+                    .contact-time img {
+                        width: 55px;
+                        height: 55px;
+                    }
+                    .contact-time-text {
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    .contact-time-text h4 {
+                        font-size: 18px;
+                        font-weight: 800;
+                        margin: 0 0 5px 0;
+                        color: #f7e0bd;
+                    }
+                    .contact-time-text p {
+                        margin: 0;
+                        font-size: 14px;
+                    }
+                    .contact-social-title {
+                        font-size: 18px;
+                        font-weight: 800;
+                        margin-bottom: 15px;
+                        color: #f7e0bd;
+                    }
+                    .contact-social-links {
+                        display: flex;
+                        gap: 15px;
+                    }
+                    .social-icon {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 40px;
+                        height: 40px;
+                        transition: transform 0.2s;
+                        text-decoration: none;
+                    }
+                    .social-icon:hover {
+                        transform: scale(1.1);
+                    }
+                    .social-icon img {
+                        max-width: 100%;
+                        max-height: 100%;
+                        object-fit: contain;
+                    }
+                    .contact-right {
+                        width: 25%;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        gap: 40px;
+                    }
+                    .wa-card-link {
+                        text-decoration: none;
+                        display: flex;
+                        flex-direction: column;
+                        border: 1px solid rgba(231, 216, 201, 0.5);
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    }
+                    .wa-card-link:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+                    }
+                    .wa-card-top {
+                        background-color: #5D4037;
+                        color: #E7D8C9;
+                        padding: 15px;
+                        text-align: center;
+                        font-size: 16px;
+                        font-weight: 600;
+                        border-bottom: 1px solid rgba(231, 216, 201, 0.5);
+                    }
+                    .wa-card-bottom {
+                        background-color: #E7D8C9;
+                        color: #653C00;
+                        padding: 15px;
+                        text-align: center;
+                        font-size: 18px;
+                        font-weight: 800;
+                    }
+
+                    /* Elemen Intro Gambar dan Teks */
+                    .intro-logo { max-width: 120px; margin-bottom: 20px; opacity: 0; animation: pureFadeInUp 1.5s ease-out 0.5s forwards; }
+                    .intro-title-text { font-family: 'Archivo Black', sans-serif; font-size: 64px; font-weight: 900; color: #FFFFFF; text-align: center; line-height: 1.2; margin-bottom: 10px; opacity: 0; animation: pureFadeInUp 1.5s ease-out 1s forwards; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+                    .intro-title-text span { color: #FFA500; }
+                    .intro-subtitle-text { font-family: 'Karla', sans-serif; font-size: 28px; font-weight: 400; color: #E0E0E0; text-align: center; margin-top: 20px; opacity: 0; animation: pureFadeInUp 1.5s ease-out 1.5s forwards; letter-spacing: 1px; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); }
+
+                    /* E. VIEW: MENU */
+                    #view-menu {
+                        box-sizing: border-box;
+                        background-image: url('/titik_seduh_login/static/src/img/Bg.png');
+                        background-size: cover;
+                        background-position: center;
+                        background-attachment: fixed;
+                        padding-top: 90px;
+                        overflow: hidden;
+                    }
+                    .menu-left-side {
+                        width: 45%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .menu-product-card {
+                        width: 85%;
+                        max-width: 450px;
+                        display: flex;
+                        flex-direction: column;
+                        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+                        border-radius: 16px;
+                        overflow: hidden;
+                    }
+                    .menu-image-container {
+                        width: 100%;
+                        aspect-ratio: 4 / 3;
+                        background-size: cover;
+                        background-position: center;
+                        transition: background-image 0.5s ease-in-out;
+                    }
+                    .menu-left-overlay {
+                        width: 100%;
+                        display: flex;
+                        min-height: 70px;
+                    }
+                    .menu-product-name {
+                        background-color: #FFA500;
+                        color: #000;
+                        font-weight: 700;
+                        padding: 0 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 40%;
+                        font-size: 18px;
+                        text-transform: uppercase;
+                        text-align: center;
+                    }
+                    .menu-product-desc {
+                        background-color: #E7D8C9;
+                        color: #5D4037;
+                        font-weight: 500;
+                        padding: 0 20px;
+                        display: flex;
+                        align-items: center;
+                        width: 60%;
+                        font-size: 15px;
+                    }
+                    .menu-right-side {
+                        width: 55%;
+                        height: 100%;
+                        padding: 40px 80px;
+                        position: relative;
+                        display: flex;
+                        flex-direction: column;
+                        box-sizing: border-box;
+                    }
+                    .menu-title {
+                        font-size: 40px;
+                        font-weight: 800;
+                        color: #5D4037;
+                        margin-bottom: 15px;
+                        text-align: center;
+                    }
+                    .menu-subtitle {
+                        font-size: 16px;
+                        color: #7A6359;
+                        text-align: center;
+                        margin-bottom: 35px;
+                        line-height: 1.5;
+                        max-width: 85%;
+                        align-self: center;
+                    }
+                    .menu-category-btn {
+                        font-size: 36px;
+                        font-weight: 800;
+                        color: #5D4037;
+                        cursor: pointer;
+                        margin-bottom: 10px;
+                        transition: color 0.3s ease;
+                        border-bottom: 1px solid rgba(93, 64, 55, 0.2);
+                        padding-bottom: 8px;
+                        text-transform: uppercase;
+                    }
+                    .menu-category-btn.active {
+                        color: #FFA500;
+                    }
+                    .menu-nav-arrows {
+                        margin-top: 25px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                        z-index: 10;
+                    }
+                    .menu-arrow {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        transition: transform 0.3s ease;
+                        width: 40px;
+                        height: 40px;
+                    }
+                    .menu-arrow:hover {
+                        transform: scale(1.1);
+                    }
+                    .menu-arrow img {
+                        max-width: 100%;
+                        max-height: 100%;
+                        object-fit: contain;
+                    }
+                </style>
+
+                <section id="intro-screen">
+                    <img src="/titik_seduh_login/static/src/img/Titik-Seduh-Logo.png" alt="Logo" class="intro-logo" />
+                    <div class="intro-title-text">
+                        Welcome to<br/>
+                        <span>Titik Seduh Coffe</span>
+                    </div>
+                    <div class="intro-subtitle-text">
+                        Satu Titik, Sejuta Rasa
+                    </div>
+                </section>
+
+                <div id="main-content-wrapper">
+                    
+                    <div class="custom-header">
+                        <div class="header-left">
+                            <img src="/titik_seduh_login/static/src/img/Titik-Seduh-Header.png" alt="Logo Header" class="header-logo" />
+                            <nav class="header-center">
+                                <a id="menu-home" onclick="gantiHalaman('home')" class="nav-link active">Home</a>
+                                <a id="menu-about" onclick="gantiHalaman('about')" class="nav-link">About</a>
+                                <a id="menu-menu" onclick="gantiHalaman('menu')" class="nav-link">Menu</a>
+                                <a id="menu-location" onclick="gantiHalaman('location')" class="nav-link">Location</a>
+                                <a id="menu-contact" onclick="gantiHalaman('contact')" class="nav-link">Contact</a>
+                            </nav>
+                        </div>
+                        <div class="header-right">
+                            <a href="/web/login" class="btn-login-header">Login</a>
+                        </div>
+                    </div>
+
+                    <section id="view-home" class="page-view active-view">
+                        <div class="home-content-container">
+                            <h1 class="home-title">SATU TITIK,<br/>SEJUTA RASA</h1>
+                            <p class="home-desc">
+                                Lebih dari sekadar kopi, kami menyeduh cerita.<br/>
+                                Temukan rasa favoritmu, ambil waktu sejenak, dan<br/>
+                                ciptakan momen tak terlupakan di setiap<br/>
+                                tegukannya.
+                            </p>
+                            <div class="home-button-group">
+                                <a onclick="gantiHalaman('menu')" class="btn-home-cta btn-brown" style="cursor: pointer;">View Menu</a>
+                                <a onclick="gantiHalaman('location')" class="btn-home-cta btn-orange" style="cursor: pointer;">LOCATION</a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="view-menu" class="page-view">
+                        <div class="menu-left-side">
+                            <div class="menu-product-card">
+                                <div class="menu-image-container" id="menu-image-container" style="background-image: url('/titik_seduh_login/static/src/img/Bg-Titik-Seduh.jpg');"></div>
+                                <div class="menu-left-overlay">
+                                    <div class="menu-product-name" id="menu-product-name">COFFE LATTE</div>
+                                    <div class="menu-product-desc" id="menu-product-desc">Espresso + Coffe + Milk</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="menu-right-side">
+                            <div class="menu-title">MENU</div>
+                            <div class="menu-subtitle">
+                                Temukan ragam pilihan minuman dan makanan yang diracik khusus untuk menemani setiap momenmu. Dari seduhan kopi autentik hingga camilan lezat, temukan "sejuta rasa" di setiap pesanannya.
+                            </div>
+                            
+                            <div class="menu-category-btn active" id="btn-cat-makanan" onclick="setCategory('makanan')">MAKANAN</div>
+                            <div class="menu-category-btn" id="btn-cat-minuman" onclick="setCategory('minuman')">MINUMAN</div>
+                            
+                            <div class="menu-nav-arrows">
+                                <div class="menu-arrow" onclick="prevProduct()">
+                                    <img src="/titik_seduh_login/static/src/img/Panah-Kiri.png" alt="Prev"/>
+                                </div>
+                                <div class="menu-arrow" onclick="nextProduct()">
+                                    <img src="/titik_seduh_login/static/src/img/Panah-Kanan.png" alt="Next"/>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="view-about" class="page-view">
+                        <div class="about-content-container">
+                            <div class="about-top-section">
+                                <div class="about-images">
+                                    <img src="/titik_seduh_login/static/src/img/Bg-About.jpg" alt="Titik Seduh Coffee" class="about-img-1" />
+                                    <img src="/titik_seduh_login/static/src/img/Bg-About1.jpg" alt="Coffee Pouring" class="about-img-2" />
+                                </div>
+                                <div class="about-text-content">
+                                    <h2 class="about-title">Berawal dari Satu Titik...</h2>
+                                    <p class="about-desc">
+                                        Berdiri pada tahun 2026, Titik Seduh bukanlah sekadar kedai kopi biasa. Tempat ini adalah wujud nyata dari mimpi dan kolaborasi empat mahasiswa Politeknik Negeri Semarang. Berangkat dari filosofi sederhana bahwa perjalanan yang hebat selalu dimulai dari satu titik awal, kami memilih biji kopi terbaik dan meraciknya dengan presisi untuk menghadirkan sejuta rasa. Mari mampir, dan temukan titik nyamanmu bersama kami.
+                                    </p>
+                                    
+                                    <div class="about-sub-item">
+                                        <h4 class="about-subtitle">Awal Mula</h4>
+                                        <p class="about-subdesc">
+                                            Berawal dari kebiasaan berkumpul, bertukar ide, dan mengerjakan tugas kampus bersama yang memantik sebuah inspirasi.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="about-sub-item">
+                                        <h4 class="about-subtitle">2026</h4>
+                                        <p class="about-subdesc">
+                                            Titik Seduh resmi berdiri untuk menjadi ruang singgah dan 'rumah ketiga' yang nyaman bagi siapa saja.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="about-bottom-section">
+                                <h3 style="color: #5D4037; font-weight: 900; font-size: 36px; margin-bottom: 40px; text-transform: uppercase;">Pilar Utama Titik Seduh</h3>
+                                <div class="team-grid">
+                                    <div class="team-member">
+                                        <img src="/titik_seduh_login/static/src/img/Cindy.jpg" alt="Cindy Amelia" class="team-photo" />
+                                        <div class="team-name">Cindy Amelia</div>
+                                    </div>
+                                    <div class="team-member">
+                                        <img src="/titik_seduh_login/static/src/img/Nadhief.jpg" alt="M. Nadief Dhiaulhaq" class="team-photo" />
+                                        <div class="team-name">M. Nadief Dhiaulhaq</div>
+                                    </div>
+                                    <div class="team-member">
+                                        <img src="/titik_seduh_login/static/src/img/Syafiq.jpg" alt="Muhammad Syafiq Ulinnuha A." class="team-photo" />
+                                        <div class="team-name">Muhammad Syafiq Ulinnuha A.</div>
+                                    </div>
+                                    <div class="team-member">
+                                        <img src="/titik_seduh_login/static/src/img/Yudhis.jpg" alt="Yudhistira Alkautsar Susilo" class="team-photo" />
+                                        <div class="team-name">Yudhistira Alkautsar Susilo</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="view-location" class="page-view">
+                        <div class="location-content-container">
+                            <h2 class="location-title">LOKASI TITIK SEDUH</h2>
+                            
+                            <a href="https://maps.app.goo.gl/wjb73vkYUBFuKDsu9" target="_blank" class="location-map-container">
+                                <img src="/titik_seduh_login/static/src/img/Desain-Visual.jpg" alt="Desain Visual Lokasi" class="img-location-content" />
+                            </a>
+                            
+                            <div class="location-text">
+                                <h4>POLITEKNIK NEGERI SEMARANG</h4>
+                                <p>Jl. Prof. Soedarto, Tembalang, Kec. Tembalang, Kota Semarang, Jawa Tengah 50275</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="view-contact" class="page-view">
+                        <div class="contact-content-container">
+                            <div class="contact-left">
+                                <img src="/titik_seduh_login/static/src/img/Ilustrasi-Kedai.jpg" alt="Ilustrasi Kedai" />
+                            </div>
+                            <div class="contact-middle">
+                                <h3>Titik Nyaman</h3>
+                                <div class="contact-features">
+                                    <div class="contact-feature-item">
+                                        <span class="feature-icon">📶</span> Free High-Speed WiFi
+                                    </div>
+                                    <div class="contact-feature-item">
+                                        <span class="feature-icon">🔌</span> Colokan Tersedia
+                                    </div>
+                                    <div class="contact-feature-item">
+                                        <span class="feature-icon">🅿️</span> Parkir Luas &amp; Aman
+                                    </div>
+                                    <div class="contact-feature-item">
+                                        <span class="feature-icon">🚬</span> Smoking &amp; Non-Smoking Area
+                                    </div>
+                                </div>
+                                <div class="contact-time">
+                                    <img src="/titik_seduh_login/static/src/img/Icon-Waktu.png" alt="Waktu Seduh" />
+                                    <div class="contact-time-text">
+                                        <h4>Waktu Seduh</h4>
+                                        <p>Setiap Hari : 10.00 - 22.00</p>
+                                    </div>
+                                </div>
+                                <div class="contact-social">
+                                    <h4 class="contact-social-title">Temukan Kami</h4>
+                                    <div class="contact-social-links">
+                                        <a href="https://facebook.com/" target="_blank" class="social-icon">
+                                            <img src="/titik_seduh_login/static/src/img/FB.png" alt="Facebook" />
+                                        </a>
+                                        <a href="https://instagram.com/" target="_blank" class="social-icon">
+                                            <img src="/titik_seduh_login/static/src/img/IG.png" alt="Instagram" />
+                                        </a>
+                                        <a href="https://linkedin.com/" target="_blank" class="social-icon">
+                                            <img src="/titik_seduh_login/static/src/img/LinkedIn.png" alt="LinkedIn" />
+                                        </a>
+                                        <a href="https://twitter.com/" target="_blank" class="social-icon">
+                                            <img src="/titik_seduh_login/static/src/img/X.png" alt="X" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contact-right">
+                                <a href="https://wa.me/62895632489528" target="_blank" class="wa-card-link">
+                                    <div class="wa-card-top">+62895632489528</div>
+                                    <div class="wa-card-bottom">Informasi Layanan</div>
+                                </a>
+                                <a href="https://wa.me/6282189856874" target="_blank" class="wa-card-link">
+                                    <div class="wa-card-top">+6282189856874</div>
+                                    <div class="wa-card-bottom">Event Titik Seduh</div>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+                
+            </div>
+
+            <script type="text/javascript">
+                console.log("🔥 SCRIPT DINAMIS TITIK SEDUH SIAP!");
+
+                document.addEventListener("mousedown", function(event) {
+                    var wrapElement = document.getElementById("wrap");
+                    var introScreen = document.getElementById("intro-screen");
+                    var mainWrapper = document.getElementById("main-content-wrapper");
+
+                    if (wrapElement) {
+                        if (wrapElement.contains(event.target)) {
+                            if (introScreen) {
+                                if (!introScreen.classList.contains("slide-up-exit")) {
+                                    console.log("🚀 Masuk Ke Halaman Utama.");
+                                    introScreen.classList.add("slide-up-exit");
+                                    mainWrapper.classList.add("show");
+                                    wrapElement.style.cursor = "default";
+                                }
+                            }
+                        }
+                    }
+                });
+
+                function gantiHalaman(targetPage) {
+                    event.stopPropagation();
+                    var homeView = document.getElementById("view-home");
+                    var aboutView = document.getElementById("view-about");
+                    var menuView = document.getElementById("view-menu");
+                    var locationView = document.getElementById("view-location");
+                    var contactView = document.getElementById("view-contact");
+                    var menuHome = document.getElementById("menu-home");
+                    var menuAbout = document.getElementById("menu-about");
+                    var menuMenu = document.getElementById("menu-menu");
+                    var menuLocation = document.getElementById("menu-location");
+                    var menuContact = document.getElementById("menu-contact");
+
+                    var views = [homeView, aboutView, menuView, locationView, contactView];
+                    var menus = [menuHome, menuAbout, menuMenu, menuLocation, menuContact];
+
+                    views.forEach(function(v) { if (v) v.classList.remove("active-view"); });
+                    menus.forEach(function(m) { if (m) m.classList.remove("active"); });
+
+                    if (targetPage === 'home') {
+                        if (homeView) homeView.classList.add("active-view");
+                        if (menuHome) menuHome.classList.add("active");
+                    } else if (targetPage === 'about') {
+                        if (aboutView) aboutView.classList.add("active-view");
+                        if (menuAbout) menuAbout.classList.add("active");
+                    } else if (targetPage === 'menu') {
+                        if (menuView) menuView.classList.add("active-view");
+                        if (menuMenu) menuMenu.classList.add("active");
+                    } else if (targetPage === 'location') {
+                        if (locationView) locationView.classList.add("active-view");
+                        if (menuLocation) menuLocation.classList.add("active");
+                    } else if (targetPage === 'contact') {
+                        if (contactView) contactView.classList.add("active-view");
+                        if (menuContact) menuContact.classList.add("active");
+                    }
+                }
+
+                // --- DATA MENU DINAMIS DAN SLIDER LOGIC ---
+                var menuData = {
+                    'makanan': [],
+                    'minuman': []
+                };
+
+                // Ambil data produk Makanan (dari QWeb)
+                <t t-foreach="request.env['product.template'].sudo().search([('categ_id.name', 'ilike', 'makan')], limit=3)" t-as="p">
+                    menuData['makanan'].push({
+                        name: "<t t-esc="p.name"/>",
+                        desc: "<t t-esc="p.description_sale or 'Spesial dari Titik Seduh'"/>",
+                        image: "/web/image/product.template/<t t-esc="p.id"/>/image_1024"
+                    });
+                </t>
+                
+                // Ambil data produk Minuman (dari QWeb)
+                <t t-foreach="request.env['product.template'].sudo().search([('categ_id.name', 'ilike', 'minum')], limit=3)" t-as="p">
+                    menuData['minuman'].push({
+                        name: "<t t-esc="p.name"/>",
+                        desc: "<t t-esc="p.description_sale or 'Spesial dari Titik Seduh'"/>",
+                        image: "/web/image/product.template/<t t-esc="p.id"/>/image_1024"
+                    });
+                </t>
+
+                // Fallback jika tidak ada produk dari QWeb
+                if (menuData['makanan'].length === 0) {
+                    menuData['makanan'] = [
+                        { name: "NASI GORENG SPESIAL", desc: "Nasi + Telur + Ayam + Kerupuk", image: "/titik_seduh_login/static/src/img/Bg-Titik-Seduh.jpg" },
+                        { name: "MIE GORENG JAWA", desc: "Mie + Sayur + Telur", image: "/titik_seduh_login/static/src/img/Bg-Titik-Seduh.jpg" },
+                        { name: "CROISSANT", desc: "Roti lapis mentega renyah", image: "/titik_seduh_login/static/src/img/Bg-Titik-Seduh.jpg" }
+                    ];
+                }
+                if (menuData['minuman'].length === 0) {
+                    menuData['minuman'] = [
+                        { name: "COFFE LATTE", desc: "Espresso + Coffe + Milk", image: "/titik_seduh_login/static/src/img/Bg-Titik-Seduh.jpg" },
+                        { name: "AMERICANO", desc: "Espresso + Air Mineral", image: "/titik_seduh_login/static/src/img/Bg-Titik-Seduh.jpg" },
+                        { name: "MOCCACINO", desc: "Espresso + Coklat + Susu", image: "/titik_seduh_login/static/src/img/Bg-Titik-Seduh.jpg" }
+                    ];
+                }
+
+                var currentCategory = 'makanan';
+                var currentIndex = 0;
+
+                function updateMenuDisplay() {
+                    var items = menuData[currentCategory];
+                    if (items.length > 0) {
+                        var item = items[currentIndex];
+                        document.getElementById('menu-product-name').innerText = item.name;
+                        document.getElementById('menu-product-desc').innerText = item.desc;
+                        document.getElementById('menu-image-container').style.backgroundImage = "url('" + item.image + "')";
+                    }
+                }
+
+                function setCategory(cat) {
+                    currentCategory = cat;
+                    currentIndex = 0;
+                    
+                    document.getElementById('btn-cat-makanan').classList.remove('active');
+                    document.getElementById('btn-cat-minuman').classList.remove('active');
+                    document.getElementById('btn-cat-' + cat).classList.add('active');
+                    
+                    updateMenuDisplay();
+                }
+
+                function nextProduct() {
+                    var items = menuData[currentCategory];
+                    if(items.length > 0) {
+                        currentIndex = (currentIndex + 1) % items.length;
+                        updateMenuDisplay();
+                    }
+                }
+
+                function prevProduct() {
+                    var items = menuData[currentCategory];
+                    if(items.length > 0) {
+                        currentIndex = (currentIndex - 1 + items.length) % items.length;
+                        updateMenuDisplay();
+                    }
+                }
+
+                setTimeout(updateMenuDisplay, 100);
+            </script>
+
+        </xpath>
+    </template>
+</odoo>

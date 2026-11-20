@@ -1,0 +1,15 @@
+// This file is meant to be edited automatically by the user. The variables it
+// contains should not be renamed otherwise it would break existing customers
+// customizations.
+
+$o-user-website-values: map-merge($o-user-website-values, o-map-omit((
+    'buttons-font': 'Archivo Black',
+    'google-fonts': ('Archivo Black'),
+    'google-local-fonts': null,
+    'uploaded-local-fonts': null,
+    'font': 'Inter',
+    'headings-font': 'Archivo Black',
+    'menu-box-shadow': rgba(0, 0, 0, 0.15) 0px 8px 16px 0px,
+    'footer-gradient': NULL,
+    // -- hook --
+)));

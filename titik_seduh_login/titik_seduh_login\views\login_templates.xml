@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="login_custom" inherit_id="web.login" name="Titik Seduh Login">
+        
+<xpath expr="//form" position="before">
+    <div class="ts_bg_container"></div>
+    
+    <div class="ts_form_header">
+        <h1>Welcome</h1>
+        <p>Login with Email</p>
+    </div>
+</xpath>
+
+        <xpath expr="//form" position="after">
+            <div class="ts_social_login">
+                <div class="ts_divider"><span>OR</span></div>
+                <div class="ts_social_buttons">
+                    <button type="button" class="btn ts_btn_social"><img src="/titik_seduh_login/static/src/img/Google.png" alt="Google Logo" style="width: 24px; height: 24px; object-fit: contain;"/></button>
+                    <button type="button" class="btn ts_btn_social"><img src="/titik_seduh_login/static/src/img/Facebook.png" alt="Facebook Logo" style="width: 24px; height: 24px; object-fit: contain;"/></button>
+                    <button type="button" class="btn ts_btn_social"><img src="/titik_seduh_login/static/src/img/Apple.png" alt="Apple Logo" style="width: 24px; height: 24px; object-fit: contain;"/></button>
+                </div>
+                <p class="ts_register">Don't have account? <a href="#">Register Now</a></p>
+            </div>
+        </xpath>
+        <xpath expr="//button[@value='/web/become']" position="replace">
+        </xpath>
+
+        <!-- Sembunyikan label bawaan Odoo agar "Choose a user" tidak muncul, tanpa menghapus elemennya agar OWL tidak error -->
+        <xpath expr="//label[@for='login']" position="attributes">
+            <attribute name="style">display: none !important;</attribute>
+        </xpath>
+        <xpath expr="//label[@for='password']" position="attributes">
+            <attribute name="style">display: none !important;</attribute>
+        </xpath>
+
+        <!-- Tambahkan logo pada input Email dan bungkus dengan ts-input-container -->
+        <xpath expr="//input[@name='login']" position="replace">
+            <div class="ts-input-container">
+                <img src="/titik_seduh_login/static/src/img/Email.png" class="ts-input-icon" alt="Email Logo" style="z-index: 10;"/>
+                <input type="text" placeholder="Email" name="login" t-att-value="login" id="login" class="form-control" required="required" autocapitalize="off" autocomplete="username"/>
+            </div>
+        </xpath>
+
+        <!-- Tambahkan logo pada input Password dan bungkus dengan ts-input-container -->
+        <xpath expr="//input[@name='password']" position="replace">
+            <div class="ts-input-container">
+                <img src="/titik_seduh_login/static/src/img/Password.png" class="ts-input-icon" alt="Password Logo" style="z-index: 10;"/>
+                <input type="password" placeholder="Password" name="password" id="password" class="form-control" required="required" autocomplete="current-password" t-att-autofocus="'autofocus' if login else None" maxlength="4096"/>
+            </div>
+        </xpath>
+        
+    </template>
+
+    <template id="titik_seduh_global_icons" inherit_id="web.layout">
+        <xpath expr="//head" position="inside">
+            <link rel="icon" href="/titik_seduh_login/static/src/img/logo.png" type="image/png" />
+            <link rel="shortcut icon" href="/titik_seduh_login/static/src/img/logo.png" type="image/png" />
+            <link rel="apple-touch-icon" href="/titik_seduh_login/static/src/img/logo.png" />
+        </xpath>
+    </template>
+</odoo>

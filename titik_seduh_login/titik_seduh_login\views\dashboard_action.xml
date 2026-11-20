@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_titik_seduh_dashboard" model="ir.actions.client">
+        <field name="name">Dashboard Enterprise</field>
+        <field name="tag">titik_seduh_dashboard.EnterpriseDashboard</field>
+        <field name="target">main</field>
+    </record>
+
+    <!-- Menu item replacing or appearing near Dashboards -->
+    <!-- We will use the root menu from Dashboards app if available, or just a new top level menu -->
+    <!-- Since the user wants to replace the Sales dashboard, we add this inside Dashboards -->
+    <menuitem id="menu_titik_seduh_dashboard"
+              name="Dashboard Enterprise"
+              action="action_titik_seduh_dashboard"
+              parent="spreadsheet_dashboard.spreadsheet_dashboard_menu_root"
+              sequence="1"/>
+</odoo>

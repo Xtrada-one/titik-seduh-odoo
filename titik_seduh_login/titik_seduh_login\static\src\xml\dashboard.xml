@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="titik_seduh_dashboard.EnterpriseDashboard" owl="1">
+        <div class="enterprise-dashboard-container p-4 h-100 overflow-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="m-0 font-weight-bold enterprise-title">Dashboard Enterprise</h2>
+                <div>
+                    <button class="btn btn-primary" t-on-click="loadData">
+                        <i class="fa fa-refresh me-2"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-4" t-if="state.isLoaded">
+                <!-- Total Pelanggan -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="kpi-card card border-0 shadow-sm rounded-4 overflow-hidden h-100" t-on-click="() => this.openAction('res.partner', 'Pelanggan', [['active', '=', true]])">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper bg-primary-light text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                <i class="fa fa-users fa-2x"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold">Total Pelanggan</h6>
+                                <h3 class="mb-0 fw-bold" t-esc="state.total_pelanggan"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Produk -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="kpi-card card border-0 shadow-sm rounded-4 overflow-hidden h-100" t-on-click="() => this.openAction('product.template', 'Produk', [['active', '=', true]])">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper bg-success-light text-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                <i class="fa fa-cubes fa-2x"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold">Total Produk</h6>
+                                <h3 class="mb-0 fw-bold" t-esc="state.total_produk"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Penjualan -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="kpi-card card border-0 shadow-sm rounded-4 overflow-hidden h-100" t-on-click="() => this.openAction('sale.order', 'Penjualan', [['state', '!=', 'cancel']])">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper bg-info-light text-info rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                <i class="fa fa-line-chart fa-2x"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold">Total Penjualan</h6>
+                                <h3 class="mb-0 fw-bold">Rp <t t-esc="formatCurrency(state.total_penjualan)"/></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Pembelian -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="kpi-card card border-0 shadow-sm rounded-4 overflow-hidden h-100" t-on-click="() => this.openAction('purchase.order', 'Pembelian', [['state', '!=', 'cancel']])">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper bg-warning-light text-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                <i class="fa fa-shopping-cart fa-2x"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold">Total Pembelian</h6>
+                                <h3 class="mb-0 fw-bold">Rp <t t-esc="formatCurrency(state.total_pembelian)"/></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stok Barang -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="kpi-card card border-0 shadow-sm rounded-4 overflow-hidden h-100" t-on-click="() => this.openAction('stock.quant', 'Stok Barang')">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper bg-danger-light text-danger rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                <i class="fa fa-archive fa-2x"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1 text-uppercase fw-bold">Stok Barang (Qty)</h6>
+                                <h3 class="mb-0 fw-bold" t-esc="state.stok_barang"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div t-else="" class="d-flex justify-content-center align-items-center" style="height: 60vh;">
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
