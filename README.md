@@ -145,16 +145,6 @@ Format penomoran otomatis (*sequence*) dokumen bisnis yang diterapkan:
 
 ---
 
-## 🖼️ Tangkapan Layar
-
-| Halaman Login | Dashboard Utam | POS Floor Plan |
-| :---: | :---: | :---: |
-| *(Tambahkan Gambar)* | *(Tambahkan Gambar)* | *(Tambahkan Gambar)* |
-
-> *Catatan: Unggah berkas gambar ke direktori `screenshots/` dan perbarui tautan di atas.*
-
----
-
 ## 👥 Anggota Tim
 
 Proyek ini disusun oleh Tim Mahasiswa Politeknik Negeri Semarang:
